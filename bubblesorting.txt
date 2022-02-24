@@ -38,12 +38,13 @@ on(9,5,1,0). on(10,6,2,0). on(11,9,1,0). on(12,10,2,0).
 
 
 % Numero istanti iniziali
-tempo(1..12). 
+tempo(1..16). 
 next(1,2). next(2,3).
 
 % Posso spostare la pallina P alla boccetta B al tempo T se non ho completato il gioco
-% move(P,B,T) | notMove(P,B,T) :- pallina(P,_), boccetta(B), tempo(T), not completato.
-move(P,B,T) | notMove(P,B,T) :- pallina(P,_), boccetta(B), tempo(T).
+%move(P,B,T) | notMove(P,B,T) :- pallina(P,_), boccetta(B), tempo(T), not completato.
+move(P,B,T) | notMove(P,B,T) :- inCima(P,_,T1), boccetta(B), tempo(T), T1 = T - 1, not completato.
+% move(P,B,T) | notMove(P,B,T) :- pallina(P,_), boccetta(B), tempo(T).
 
 % Non posso muovere due diverse palline allo stesso istante T
 :- move(P1,_,T), move(P2,_,T), P1 != P2.
@@ -108,10 +109,10 @@ boccettaCompletata(B,C,T) :- boccetta(B), boccettaConColoreUnico(B,T,N), N = 4, 
 completato :- #count{B : boccettaCompletata(B,C,T)} = 3.
 
 % Per ogni passo che faccio pago 1. Voglio minimizzare i move. 
-% :~ move(P,B,T). [1@1, P,B,T]
+:~ move(P,B,T). [1@1, P,B,T]
 
 % per ogni mossa che faccio e non ho completato pago 1
-:~ move(P,B,T), not completato. [1@1, P,B,T]
+%:~ move(P,B,T), not completato. [1@1, P,B,T]
 
 % Non è possibile muovere una pallina da una boccetta completata
 :- move(P,B,T), boccettaCompletata(B,_,T1), T1 = T - 1.
