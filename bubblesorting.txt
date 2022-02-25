@@ -38,12 +38,12 @@ on(9,5,1,0). on(10,6,2,0). on(11,9,1,0). on(12,10,2,0).
 
 
 % Numero istanti iniziali
-tempo(1..16). 
+tempo(1..14). 
 next(1,2). next(2,3).
 
 % Posso spostare la pallina P alla boccetta B al tempo T se non ho completato il gioco
 %move(P,B,T) | notMove(P,B,T) :- pallina(P,_), boccetta(B), tempo(T), not completato.
-move(P,B,T) | notMove(P,B,T) :- inCima(P,_,T1), boccetta(B), tempo(T), T1 = T - 1, not completato.
+move(P,B,T) | notMove(P,B,T) :- inCima(P,_,T1), boccetta(B), tempo(T), T1 = T - 1.
 % move(P,B,T) | notMove(P,B,T) :- pallina(P,_), boccetta(B), tempo(T).
 
 % Non posso muovere due diverse palline allo stesso istante T
@@ -106,16 +106,17 @@ capienza(B,T,N) :- boccetta(B), #count{P : on(P,_,B,0)} = N, T = 0.
 % boccetta completata se il numero di palline è 4 e sono dello stesso colore
 % OLD VERSION boccettaCompletata(B,C,T) :- boccetta(B), color(C), tempo(T), #count{P : on(P,_,B,T), pallina(P,C)} = 4.
 boccettaCompletata(B,C,T) :- boccetta(B), boccettaConColoreUnico(B,T,N), N = 4, on(P,_,B,T), pallina(P,C).
-completato :- #count{B : boccettaCompletata(B,C,T)} = 3.
+
+% completato(T) :- tempo(T), #count{B : boccettaCompletata(B,C,T)} = 3.
 
 % Per ogni passo che faccio pago 1. Voglio minimizzare i move. 
-:~ move(P,B,T). [1@1, P,B,T]
+%:~ move(P,B,T). [1@1, P,B,T]
 
 % per ogni mossa che faccio e non ho completato pago 1
-%:~ move(P,B,T), not completato. [1@1, P,B,T]
+:~ move(P,B,T), #count{B : boccettaCompletata(B,C,T)} != 3. [1@1, P,B,T]
 
 % Non è possibile muovere una pallina da una boccetta completata
-:- move(P,B,T), boccettaCompletata(B,_,T1), T1 = T - 1.
+:- move(P,B,T), on(P,_,B1,T1), boccettaCompletata(B1,_,T1), T1 = T - 1.
 
 % boccette con colore unico al loro interno all'istante T. 
 boccettaConColoreUnico(B,T,N) :- boccetta(B), tempo(T), #count{C : on(P,_,B,T), pallina(P,C)} = 1, capienza(B,T,N).
@@ -129,7 +130,6 @@ boccettaConColoreUnico(B,T,N) :- boccetta(B), #count{C : on(P,_,B,0), pallina(P,
 % preferibile non muovere una pallina da una boccetta che ha solo palline dello stesso colore
 :~ move(P,B1,T1), on(P,_,B2,T2), T2 = T1 - 1, boccettaConColoreUnico(B2,T2,_). [1@3, P,B1,T1]
 
-% preferibile muovere una pallina in una boccetta con palline dello stesso colore e non in una boccetta vuota
 
 %#show inCima/3.
 %#show on/4.
