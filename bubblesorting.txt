@@ -99,13 +99,15 @@ capienza(B,T,N) :- boccetta(B), #count{P : on(P,_,B,0)} = N, T = 0.
 
 % Se muovo una pallina in una boccetta non vuota, la pallina in cima a tale boccetta deve essere dello stesso colore
 :- move(P1,B,T), not boccettaVuota(B,T1), T1 = T - 1, inCima(P2,B,T1), pallina(P1,C1), pallina(P2,C2), C1 != C2.
+%  move(8, 5,5 ),not boccettaVuota(5,4)
+
 
 % non spostare in due move consecutivi la stessa pallina
 :- move(P,_,T), move(P,_,T1), T1 = T + 1.
 
 % boccetta completata se il numero di palline è 4 e sono dello stesso colore
 % OLD VERSION boccettaCompletata(B,C,T) :- boccetta(B), color(C), tempo(T), #count{P : on(P,_,B,T), pallina(P,C)} = 4.
-%boccettaCompletata(B,C,T) :- boccetta(B), boccettaConColoreUnico(B,T), capienza(B,T,N), N = 4, on(P,_,B,T), pallina(P,C).
+boccettaCompletata(B,C,T) :- boccetta(B), boccettaConColoreUnico(B,C,T), capienza(B,T,N), N = 4.
 
 % completato(T) :- tempo(T), #count{B : boccettaCompletata(B,C,T)} = 3.
 
@@ -129,12 +131,16 @@ boccettaConColoreUnicoMax(B1,C,T) :- tempo(T), color(C), #max{N : boccettaConCol
 % se muovo una pallina ed esiste una boccetta con colore unico ed è quella con maggiore capienza di quel colore, pago se non lo sposto in quella boccetta (boccetta non piena)
 %:~ move(P1,B1,T), pallina(P1,C1), boccettaConColoreUnicoMax(B2,C1,T1), capienza(B2,T1,N2), T1 = T - 1, B2 != B1, N2 != 4. [1@4, P1,B1,T]
 :- move(P1,B1,T), pallina(P1,C1), boccettaConColoreUnicoMax(B2,C1,T1), capienza(B2,T1,N2), T1 = T - 1, B2 != B1, N2 != 4. 
+%  move(5, 4, 5), pallina(5, blu), boccettaConColoreUnicoMax() NON è LUI
 
 esisteBoccettaConColoreUnicoMax(C,T) :- boccettaConColoreUnicoMax(_,C,T).
 
 % se sposto una pallina e non esiste boccettaConColoreUnicoMax del colore della pallina ed esiste una boccetta vuota, pago se non sposto nella boccetta vuota
 :~ move(P1,B1,T1), on(P1,_,_,T2), T2 = T1 - 1, pallina(P1,C1), not esisteBoccettaConColoreUnicoMax(C1,T2), boccettaVuota(B2,T2), B2 != B1. [1@3, P1,B1,T1]
 %:- move(P1,B1,T1), on(P1,_,_,T2), T2 = T1 - 1, pallina(P1,C1), not esisteBoccettaConColoreUnicoMax(C1,T2), boccettaVuota(B2,T2), B2 != B1. 
+
+%move(P1,B1,T1) :- tempo(T1), inCima(P1,B2,T2), pallina(P1,C1), not esisteBoccettaConColoreUnicoMax(C1,T2), T1 = T2 + 1, boccettaVuota(B1,T2), not boccettaCompletata(B2,C1,T2).
+%move(5, 4, 5)          5    inCima(5 ,3 ,4 ), pallina(8, blu),not esisteBoccettaConColoreUnicoMax(blu,4), 5  = 4  + 1, boccettaVuota(5 ,4 )
                                                                          
 % preferibile non muovere una pallina da una boccetta che ha solo palline dello stesso colore ed è max
 %:~ move(P1,B1,T1), on(P1,_,B2,T2), T2 = T1 - 1, boccettaConColoreUnicoMax(B2,_,T2), B2 != B1. [1@, P1,B1,T1]
@@ -147,9 +153,11 @@ esisteBoccettaConColoreUnicoMax(C,T) :- boccettaConColoreUnicoMax(_,C,T).
 %#show on/4.
 %#show capienza/3.
 %#show boccettaVuota/2.
-% #show haSopra/2.
+%#show haSopra/2.
 #show move/3.
-#show boccettaConColoreUnico/3.
-#show boccettaCompletata/3.
-#show boccettaConColoreUnicoMax/3.
+%#show boccettaConColoreUnico/3.
+%#show boccettaCompletata/3.
+%#show boccettaConColoreUnicoMax/3.
+%#show esisteBoccettaConColoreUnicoMax/2.
+%#show boccettaVuota/2.
 
