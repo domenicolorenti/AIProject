@@ -119,16 +119,19 @@ boccettaCompletata(B,C,T) :- boccetta(B), boccettaConColoreUnico(B,T,N), N = 4, 
 :- move(P,B,T), on(P,_,B1,T1), boccettaCompletata(B1,_,T1), T1 = T - 1.
 
 % boccette con colore unico al loro interno all'istante T. 
-boccettaConColoreUnico(B,T,N) :- boccetta(B), tempo(T), #count{C : on(P,_,B,T), pallina(P,C)} = 1, capienza(B,T,N).
+boccettaConColoreUnico(B,T) :- boccetta(B), tempo(T), #count{C : on(P,_,B,T), pallina(P,C)} = 1.
 
 % all'istante 0
-boccettaConColoreUnico(B,T,N) :- boccetta(B), #count{C : on(P,_,B,0), pallina(P,C)} = 1, T = 0, capienza(B,0,N).
+boccettaConColoreUnico(B,T) :- boccetta(B), #count{C : on(P,_,B,0), pallina(P,C)} = 1, T = 0.
 
 % se muovo una pallina ed esiste una boccetta con colore unico di quel colore, pago se non lo sposto in quella boccetta (boccetta non piena)
-:~ move(P1,B1,T), pallina(P1,C1), boccettaConColoreUnico(B2,T1,N), on(P2,_,B2,T1), pallina(P2,C2), T1 = T - 1, B2 != B1, C2 = C1, N != 4. [1@2, P1]
+:~ move(P1,B1,T), pallina(P1,C1), boccettaConColoreUnico(B2,T1), capienza(B2,T1,N), on(P2,_,B2,T1), pallina(P2,C2), T1 = T - 1, B2 != B1, C2 = C1, N != 4. [1@3, P1]
 
 % preferibile non muovere una pallina da una boccetta che ha solo palline dello stesso colore
-:~ move(P,B1,T1), on(P,_,B2,T2), T2 = T1 - 1, boccettaConColoreUnico(B2,T2,_). [1@3, P,B1,T1]
+:~ move(P,B1,T1), on(P,_,B2,T2), T2 = T1 - 1, boccettaConColoreUnico(B2,T2,_). [1@4, P,B1,T1]
+
+% preferibile spostare una pallina in una boccetta vuota se non c'è una boccetta con colore unico del colore di quella pallina
+%:~ move(P,B1,T1), boccettaVuota(B2,T2), T2 = T1 - 1, B1 != B2, not boccettaConColoreUnico(B1,T2,) [1@2, P,B1,T1]
 
 
 %#show inCima/3.
