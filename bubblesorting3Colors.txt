@@ -24,21 +24,29 @@
 color(rosso). color(blu). color(verde).
 
 % pallina(ID, colore)
-pallina(1,rosso). pallina(2,rosso). pallina(3,rosso). pallina(4,rosso).
-pallina(5,blu). pallina(6,blu). pallina(7,blu). pallina(8,blu).
-pallina(9,verde). pallina(10,verde). pallina(11,verde). pallina(12,verde).
+% pallina(1,rosso). pallina(2,rosso). pallina(3,rosso). pallina(4,rosso).
+% pallina(5,blu). pallina(6,blu). pallina(7,blu). pallina(8,blu).
+% pallina(9,verde). pallina(10,verde). pallina(11,verde). pallina(12,verde).
+
+pallina(1,blu). pallina(2,verde). pallina(3,blu). pallina(4,verde).
+pallina(5,rosso). pallina(6,rosso). pallina(7,blu). pallina(8,rosso).
+pallina(9,verde). pallina(10,verde). pallina(11,blu). pallina(12,rosso).
 
 % Ci sono 5 boccette, 2 vuote e 3 riempite con 4 palline per boccetta
 boccetta(1..5). 
 
 % on(P1,P2,B,T) -> la pallina P1 è sulla pallina P2 nella boccetta B al tempo T. P2 = 0 se è al livello ground
-on(1,0,1,0). on(2,0,2,0). on(3,0,3,0). on(4,7,3,0).
-on(5,1,1,0). on(6,2,2,0). on(7,3,3,0). on(8,4,3,0).
-on(9,5,1,0). on(10,6,2,0). on(11,9,1,0). on(12,10,2,0).
+% on(1,0,1,0). on(2,0,2,0). on(3,0,3,0). on(4,7,3,0).
+% on(5,1,1,0). on(6,2,2,0). on(7,3,3,0). on(8,4,3,0).
+% on(9,5,1,0). on(10,6,2,0). on(11,9,1,0). on(12,10,2,0).
+
+on(1,0,1,0). on(2,0,2,0). on(3,0,3,0). on(4,1,1,0).
+on(5,2,2,0). on(6,3,3,0). on(7,4,1,0). on(8,5,2,0).
+on(9,6,3,0). on(10,7,1,0). on(11,8,2,0). on(12,9,3,0).
 
 
 % Numero istanti iniziali
-tempo(1..14). 
+tempo(1..11). 
 next(1,2). next(2,3).
 
 % Posso spostare la pallina P alla boccetta B al tempo T se non ho completato il gioco
@@ -71,7 +79,6 @@ boccettaVuota(B,T) :- boccetta(B), tempo(T), not esistePallina(B,T).
 % boccette vuote all'istante 0
 esistePallina(B,0) :- on(_,_,B,0).
 boccettaVuota(B,0) :- boccetta(B), not esistePallina(B,0).
-
 
 % Aggiorno le posizioni "on" per quando viene effettuato un move
 on(P1,P2,B,T1) :- move(P1,B,T1), inCima(P2,B,T2), T2 = T1 - 1.

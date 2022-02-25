@@ -1,0 +1,162 @@
+% ----------------- MODELLO DEI DATI IN INPUT ---------------------
+
+%Programma che viene lanciato con un numero di istanti iniziale e fino a quando non trovo un answer set aumento i passi
+% al tempo T1 ho lo stato iniziale
+% al tempo T2 la pallina che ho spostato ha posizione nuova mentre tutte le altre sono nella posizione che erano prima
+
+% on ad un istante T e descrive lo stato delle palline a quellistante
+
+% Mosse errate:
+% - NON Spostare bolla da X a Y quando X è vuoto
+% - NON Spostare bolla da X a Y quando Y è pieno
+% - NON Spostare bolla da X ad Y quando X ha tutte le palline dello stesso colore C e sono di numero pari al maxAltezza H.
+% - NON Spostare da X ad Y quando Y è vuoto ed X ha tutte le palline dello stesso colore C
+% - NON Spostare da X ad Y se la pallina di X ha colore diverso dalla pallina più in alto di Y
+
+% Mosse consentite:
+% - Spostare da X ad Y se Y è vuoto ed X non ha tutte le palline dello stesso colore
+% - Spostare da X ad Y se la pallina di X è dello stesso colore della pallina in alto di Y
+
+% RISOLTO QUANDO:
+% - ogni contenitore ha lo stesso colore di palline  e il numero di palline è pari a maxAltezza
+
+% colori
+color(rosso). color(blu). color(verde). color(giallo).
+
+% pallina(ID, colore)
+pallina(1,blu). pallina(2,verde). pallina(3,blu). pallina(4,giallo).
+pallina(5,giallo). pallina(6,rosso). pallina(7,rosso). pallina(8,blu).
+pallina(9,rosso). pallina(10,verde). pallina(11,rosso). pallina(12,verde).
+pallina(13,verde). pallina(14,blu). pallina(15,giallo). pallina(16,giallo).
+
+% Ci sono 5 boccette, 2 vuote e 3 riempite con 4 palline per boccetta
+boccetta(1..6). 
+
+% on(P1,P2,B,T) -> la pallina P1 è sulla pallina P2 nella boccetta B al tempo T. P2 = 0 se è al livello ground
+on(1,0,1,0). on(2,0,2,0). on(3,0,3,0). on(4,0,4,0).
+on(5,1,1,0). on(6,2,2,0). on(7,3,3,0). on(8,4,4,0).
+on(9,5,1,0). on(10,6,2,0). on(11,7,3,0). on(12,8,4,0).
+on(13,9,1,0). on(14,10,2,0). on(15,11,3,0). on(16,12,4,0).
+
+% Numero istanti iniziali
+tempo(1..16). 
+
+% Posso spostare la pallina P alla boccetta B al tempo T se non ho completato il gioco
+%move(P,B,T) | notMove(P,B,T) :- pallina(P,_), boccetta(B), tempo(T), not completato.
+%move(P,B,T) | notMove(P,B,T) :- inCima(P,_,T1), boccetta(B), tempo(T), T1 = T - 1.
+move(P,B,T) | notMove(P,B,T) :- inCima(P,_,T1), boccetta(B), tempo(T), T1 = T - 1, not boccettaCompletata(B,T1).
+
+% Non posso muovere due diverse palline allo stesso istante T
+:- move(P1,_,T), move(P2,_,T), P1 != P2.
+
+% Non è possibile NON spostare niente ad un istante T
+esisteMoveIstanteT(T) :- tempo(T), move(_,_,T).
+
+:- tempo(T), not esisteMoveIstanteT(T).
+
+% Non posso muovere la stessa pallina in due boccette diverse allo stesso istante
+:- move(P,B1,T), move(P,B2,T), B1 != B2.
+
+haSopra(P2,T) :- tempo(T), pallina(P2,_), on(P1,P2,_,T).
+inCima(P,B,T) :- tempo(T), pallina(P,_), on(P,_,B,T), not haSopra(P,T).
+
+% haSopra e inCima all'istante 0
+haSopra(P2,0) :- pallina(P2,_), on(P1,P2,_,0).
+inCima(P,B,0) :- pallina(P,_), on(P,_,B,0), not haSopra(P,0).
+
+% Boccetta è vuota se data la boccetta non c'è un on
+esistePallina(B,T) :- tempo(T), on(_,_,B,T).
+boccettaVuota(B,T) :- boccetta(B), tempo(T), not esistePallina(B,T).
+
+% boccette vuote all'istante 0
+esistePallina(B,0) :- on(_,_,B,0).
+boccettaVuota(B,0) :- boccetta(B), not esistePallina(B,0).
+
+% Aggiorno le posizioni "on" per quando viene effettuato un move
+on(P1,P2,B,T1) :- move(P1,B,T1), inCima(P2,B,T2), T2 = T1 - 1.
+
+on(P1,P2,B,T1) :- move(P1,B,T1), boccettaVuota(B,T3), P2 = 0, T3 = T1 - 1.
+
+% Ora per le palline non coinvolte in un move all'istante T, la posizione rimane uguale ma devo portare il tempo T a T + 1
+pallinaSpostata(P,T) :- move(P,_,T).
+on(P1,P2,B,T) :- pallina(P1,_), tempo(T), not pallinaSpostata(P1,T), on(P1,P2,B,T1), T1 = T - 1.
+
+% Non posso muovere una pallina che non è in cima all'istante T
+inCimaSenzaBoccetta(P,T) :- inCima(P,_,T).
+:- move(P,B,T), not inCimaSenzaBoccetta(P,T1), T1 = T - 1.
+
+% Non posso muovere una pallina in una boccetta piena all'istante T
+capienza(B,T,N) :- boccetta(B), tempo(T), #count{P : on(P,_,B,T)} = N.
+
+% capienze istante 0
+capienza(B,T,N) :- boccetta(B), #count{P : on(P,_,B,0)} = N, T = 0.
+
+:- move(P,B,T), capienza(B,T1,N), N = 4, T1 = T - 1.
+
+% Non posso muovere una pallina nella stessa boccetta
+:- move(P,B,T), on(P,_,B,T1), T1 = T - 1.
+
+% Se muovo una pallina in una boccetta non vuota, la pallina in cima a tale boccetta deve essere dello stesso colore
+:- move(P1,B,T), not boccettaVuota(B,T1), T1 = T - 1, inCima(P2,B,T1), pallina(P1,C1), pallina(P2,C2), C1 != C2.
+%  move(8, 5,5 ),not boccettaVuota(5,4)
+
+
+% non spostare in due move consecutivi la stessa pallina
+:- move(P,_,T), move(P,_,T1), T1 = T + 1.
+
+% boccetta completata se il numero di palline è 4 e sono dello stesso colore
+% OLD VERSION boccettaCompletata(B,C,T) :- boccetta(B), color(C), tempo(T), #count{P : on(P,_,B,T), pallina(P,C)} = 4.
+boccettaCompletata(B,C,T) :- boccetta(B), boccettaConColoreUnico(B,C,T), capienza(B,T,N), N = 4.
+
+% completato(T) :- tempo(T), #count{B : boccettaCompletata(B,C,T)} = 3.
+
+% Per ogni passo che faccio pago 1. Voglio minimizzare i move. 
+%:~ move(P,B,T). [1@1, P,B,T]
+
+% per ogni mossa che faccio e non ho completato pago 1
+:~ move(P,B,T), #count{B : boccettaCompletata(B,C,T)} != 3. [1@1, P,B,T]
+
+% Non è possibile muovere una pallina da una boccetta completata
+:- move(P,B,T), on(P,_,B1,T1), boccettaCompletata(B1,_,T1), T1 = T - 1.
+
+% boccette con colore unico al loro interno all'istante T. 
+boccettaConColoreUnico(B,Col,T) :- boccetta(B), tempo(T), #count{C : on(P,_,B,T), pallina(P,C)} = 1, on(P1,_,B,T), pallina(P1,Col).
+
+% all'istante 0
+boccettaConColoreUnico(B,Col,T) :- boccetta(B), #count{C : on(P,_,B,0), pallina(P,C)} = 1, T = 0, on(P1,_,B,T), pallina(P1,Col).
+
+boccettaConColoreUnicoMax(B1,C,T) :- tempo(T), color(C), #max{N : boccettaConColoreUnico(B,C,T), capienza(B,T,N)} = Max, boccettaConColoreUnico(B1,C,T), capienza(B1,T,Max).
+
+% se muovo una pallina ed esiste una boccetta con colore unico ed è quella con maggiore capienza di quel colore, pago se non lo sposto in quella boccetta (boccetta non piena)
+%:~ move(P1,B1,T), pallina(P1,C1), boccettaConColoreUnicoMax(B2,C1,T1), capienza(B2,T1,N2), T1 = T - 1, B2 != B1, N2 != 4. [1@4, P1,B1,T]
+:- move(P1,B1,T), pallina(P1,C1), boccettaConColoreUnicoMax(B2,C1,T1), capienza(B2,T1,N2), T1 = T - 1, B2 != B1, N2 != 4. 
+%  move(5, 4, 5), pallina(5, blu), boccettaConColoreUnicoMax() NON è LUI
+
+esisteBoccettaConColoreUnicoMax(C,T) :- boccettaConColoreUnicoMax(_,C,T).
+
+% se sposto una pallina e non esiste boccettaConColoreUnicoMax del colore della pallina ed esiste una boccetta vuota, pago se non sposto nella boccetta vuota
+:~ move(P1,B1,T1), on(P1,_,_,T2), T2 = T1 - 1, pallina(P1,C1), not esisteBoccettaConColoreUnicoMax(C1,T2), boccettaVuota(B2,T2), B2 != B1. [1@3, P1,B1,T1]
+%:- move(P1,B1,T1), on(P1,_,_,T2), T2 = T1 - 1, pallina(P1,C1), not esisteBoccettaConColoreUnicoMax(C1,T2), boccettaVuota(B2,T2), B2 != B1. 
+
+%move(P1,B1,T1) :- tempo(T1), inCima(P1,B2,T2), pallina(P1,C1), not esisteBoccettaConColoreUnicoMax(C1,T2), T1 = T2 + 1, boccettaVuota(B1,T2), not boccettaCompletata(B2,C1,T2).
+%move(5, 4, 5)          5    inCima(5 ,3 ,4 ), pallina(8, blu),not esisteBoccettaConColoreUnicoMax(blu,4), 5  = 4  + 1, boccettaVuota(5 ,4 )
+                                                                         
+% preferibile non muovere una pallina da una boccetta che ha solo palline dello stesso colore ed è max
+%:~ move(P1,B1,T1), on(P1,_,B2,T2), T2 = T1 - 1, boccettaConColoreUnicoMax(B2,_,T2), B2 != B1. [1@, P1,B1,T1]
+:- move(P1,B1,T1), on(P1,_,B2,T2), T2 = T1 - 1, boccettaConColoreUnicoMax(B2,_,T2), B2 != B1.
+
+% preferibile spostare una pallina in una boccetta vuota se non c'è una boccetta con colore unico del colore di quella pallina
+%:~ move(P1,B1,T1), boccettaVuota(B2,T2), T2 = T1 - 1, not boccettaConColoreUnico(B3,T2), B3 != B1, B1!=B2, B3 != B2, boccetta(B3), on(P2,_,B3,T2), pallina(P2,C2), pallina(P1,C1), C1 = C2. [1@2, P1,B1,T1]
+
+%#show inCima/3.
+%#show on/4.
+%#show capienza/3.
+%#show boccettaVuota/2.
+%#show haSopra/2.
+#show move/3.
+%#show boccettaConColoreUnico/3.
+%#show boccettaCompletata/3.
+%#show boccettaConColoreUnicoMax/3.
+%#show esisteBoccettaConColoreUnicoMax/2.
+%#show boccettaVuota/2.
+
