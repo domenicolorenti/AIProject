@@ -1,28 +1,34 @@
 % ----------------- MODELLO DEI DATI IN INPUT ---------------------
 % colori
-color(rosso). color(blu). color(verde). color(giallo).
+color(rosso). color(blu). color(verde). color(giallo). color(rosa).
 
 % pallina(ID, colore)
-pallina(1,blu). pallina(2,verde). pallina(3,blu). pallina(4,giallo).
-pallina(5,giallo). pallina(6,rosso). pallina(7,rosso). pallina(8,blu).
-pallina(9,rosso). pallina(10,verde). pallina(11,rosso). pallina(12,verde).
-pallina(13,verde). pallina(14,blu). pallina(15,giallo). pallina(16,giallo).
+pallina(1,giallo). pallina(2,rosa). pallina(3,verde). pallina(4,rosa). pallina(5,giallo).
+pallina(6,rosso). pallina(7,blu). pallina(8,rosso). pallina(9,verde). pallina(10,rosso).
+pallina(11,rosa). pallina(12,rosso). pallina(13,blu). pallina(14,blu). pallina(15,blu). 
+pallina(16,rosa). pallina(17,verde). pallina(18,verde). pallina(19,giallo). pallina(20,giallo).
 
-% Ci sono 5 boccette, 2 vuote e 3 riempite con 4 palline per boccetta
-boccetta(1..6). 
+% Ci sono 7 boccette, 2 vuote e 3 riempite con 4 palline per boccetta
+boccetta(1..7). 
 
 % on(P1,P2,B,T) -> la pallina P1 è sulla pallina P2 nella boccetta B al tempo T. P2 = 0 se è al livello ground
-on(1,0,1,0). on(2,0,2,0). on(3,0,3,0). on(4,0,4,0).
-on(5,1,1,0). on(6,2,2,0). on(7,3,3,0). on(8,4,4,0).
-on(9,5,1,0). on(10,6,2,0). on(11,7,3,0). on(12,8,4,0).
-on(13,9,1,0). on(14,10,2,0). on(15,11,3,0). on(16,12,4,0).
+on(16,11,1,0). on(17,12,2,0). on(18,13,3,0). on(19,14,4,0). on(20,15,5,0).
+on(11,6,1,0). on(12,7,2,0). on(13,8,3,0). on(14,9,4,0). on(15,10,5,0).
+on(6,1,1,0). on(7,2,2,0). on(8,3,3,0). on(9,4,4,0). on(10,5,5,0).
+on(1,0,1,0). on(2,0,2,0). on(3,0,3,0). on(4,0,4,0). on(5,0,5,0).
+
+
+
+
 
 % Numero istanti iniziali
-tempo(1..16). 
+tempo(1..25). 
 
 % Posso spostare la pallina P alla boccetta B al tempo T se non ho completato il gioco
 
+%move(P,B,T) | notMove(P,B,T) :- inCima(P,_,T1), boccetta(B), tempo(T), T1 = T - 1, not boccettaCompletata(B,T1), not completato(N), N = 5.
 move(P,B,T) | notMove(P,B,T) :- inCima(P,_,T1), boccetta(B), tempo(T), T1 = T - 1, not boccettaCompletata(B,T1).
+
 
 % Non posso muovere due diverse palline allo stesso istante T
 :- move(P1,_,T), move(P2,_,T), P1 != P2.
@@ -83,6 +89,8 @@ capienza(B,T,N) :- boccetta(B), #count{P : on(P,_,B,0)} = N, T = 0.
 
 % boccetta completata se il numero di palline è 4 e sono dello stesso colore
 boccettaCompletata(B,C,T) :- boccetta(B), boccettaConColoreUnico(B,C,T), capienza(B,T,N), N = 4.
+
+completato(N) :- #count{B : boccettaCompletata(B,C,T)} = N.
 
 % Per ogni passo che faccio pago 1. Voglio minimizzare i move. 
 
