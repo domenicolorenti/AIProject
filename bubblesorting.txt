@@ -105,7 +105,7 @@ capienza(B,T,N) :- boccetta(B), #count{P : on(P,_,B,0)} = N, T = 0.
 
 % boccetta completata se il numero di palline è 4 e sono dello stesso colore
 % OLD VERSION boccettaCompletata(B,C,T) :- boccetta(B), color(C), tempo(T), #count{P : on(P,_,B,T), pallina(P,C)} = 4.
-boccettaCompletata(B,C,T) :- boccetta(B), boccettaConColoreUnico(B,T,N), N = 4, on(P,_,B,T), pallina(P,C).
+boccettaCompletata(B,C,T) :- boccetta(B), boccettaConColoreUnico(B,T),capienza(B,T,N), N = 4, on(P,_,B,T), pallina(P,C).
 
 % completato(T) :- tempo(T), #count{B : boccettaCompletata(B,C,T)} = 3.
 
@@ -131,15 +131,14 @@ boccettaConColoreUnico(B,T) :- boccetta(B), #count{C : on(P,_,B,0), pallina(P,C)
 :~ move(P,B1,T1), on(P,_,B2,T2), T2 = T1 - 1, boccettaConColoreUnico(B2,T2,_). [1@4, P,B1,T1]
 
 % preferibile spostare una pallina in una boccetta vuota se non c'è una boccetta con colore unico del colore di quella pallina
-%:~ move(P,B1,T1), boccettaVuota(B2,T2), T2 = T1 - 1, B1 != B2, not boccettaConColoreUnico(B1,T2,) [1@2, P,B1,T1]
-
+:~ move(P1,B1,T1), boccettaVuota(B2,T2), T2 = T1 - 1, not boccettaConColoreUnico(B3,T2), B3 != B1, B1!=B2, B3 != B2, boccetta(B3), on(P2,_,B3,T2), pallina(P2,C2), pallina(P1,C1), C1 = C2. [1@2, P1,B1,T1]
 
 %#show inCima/3.
 %#show on/4.
-% #show capienza/3.
+%#show capienza/3.
 %#show boccettaVuota/2.
 % #show haSopra/2.
 #show move/3.
-%#show boccettaConColoreUnico/3.
+%#show boccettaConColoreUnico/2.
 #show boccettaCompletata/3.
 
