@@ -12,13 +12,13 @@ pallina(13,verde). pallina(14,blu). pallina(15,giallo). pallina(16,giallo).
 boccetta(1..6). 
 
 % on(P1,P2,B,T) -> la pallina P1 è sulla pallina P2 nella boccetta B al tempo T. P2 = 0 se è al livello ground
-on(1,0,1,0). on(2,0,2,0). on(3,0,3,0). on(4,0,4,0).
-on(5,1,1,0). on(6,2,2,0). on(7,3,3,0). on(8,4,4,0).
-on(9,5,1,0). on(10,6,2,0). on(11,7,3,0). on(12,8,4,0).
 on(13,9,1,0). on(14,10,2,0). on(15,11,3,0). on(16,12,4,0).
+on(9,5,1,0). on(10,6,2,0). on(11,7,3,0). on(12,8,4,0).
+on(5,1,1,0). on(6,2,2,0). on(7,3,3,0). on(8,4,4,0).
+on(1,0,1,0). on(2,0,2,0). on(3,0,3,0). on(4,0,4,0).
 
 % Numero istanti iniziali
-tempo(1..16). 
+tempo(1..17). 
 
 % Posso spostare la pallina P alla boccetta B al tempo T se non ho completato il gioco
 
@@ -28,9 +28,13 @@ move(P,B,T) | notMove(P,B,T) :- inCima(P,_,T1), boccetta(B), tempo(T), T1 = T - 
 :- move(P1,_,T), move(P2,_,T), P1 != P2.
 
 % Non è possibile NON spostare niente ad un istante T
-esisteMoveIstanteT(T) :- tempo(T), move(_,_,T).
+%esisteMoveIstanteT(T) :- tempo(T), move(_,_,T).
 
-:- tempo(T), not esisteMoveIstanteT(T).
+%:- tempo(T), not esisteMoveIstanteT(T).
+
+:- not completato(4).
+
+completato(N) :- #count{B : boccettaCompletata(B,C,T)} = N.
 
 % Non posso muovere la stessa pallina in due boccette diverse allo stesso istante
 :- move(P,B1,T), move(P,B2,T), B1 != B2.

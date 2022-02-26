@@ -58,43 +58,43 @@ public class Main {
       	InputProgram facts = new ASPInputProgram();
       	
       	try {
-      		for(int i = 1; i <= 5; i++) {
-				facts.addObjectInput(new Boccetta(i));
-			}
-			
-			facts.addObjectInput(new Colore("rosso"));
-			facts.addObjectInput(new Colore("blu"));
-			facts.addObjectInput(new Colore("verde"));
-			
-			for(int i = 1; i <= 11; i++) {
-				facts.addObjectInput(new Tempo(i));
-			}
-			
-			facts.addObjectInput(new On(1,0,1,0));
-			facts.addObjectInput(new On(2,0,2,0));
-			facts.addObjectInput(new On(3,0,3,0));
-			facts.addObjectInput(new On(4,1,1,0));
-			facts.addObjectInput(new On(5,2,2,0));
-			facts.addObjectInput(new On(6,3,3,0));
-			facts.addObjectInput(new On(7,4,1,0));
-			facts.addObjectInput(new On(8,5,2,0));
-			facts.addObjectInput(new On(9,6,3,0));
-			facts.addObjectInput(new On(10,7,1,0));
-			facts.addObjectInput(new On(11,8,2,0));
-			facts.addObjectInput(new On(12,9,3,0));
-			
-			facts.addObjectInput(new Pallina(1, "blu"));
-			facts.addObjectInput(new Pallina(2, "verde"));
-			facts.addObjectInput(new Pallina(3, "blu"));
-			facts.addObjectInput(new Pallina(4, "verde"));
-			facts.addObjectInput(new Pallina(5, "rosso"));
-			facts.addObjectInput(new Pallina(6, "rosso"));
-			facts.addObjectInput(new Pallina(7, "blu"));
-			facts.addObjectInput(new Pallina(8, "rosso"));
-			facts.addObjectInput(new Pallina(9, "verde"));
-			facts.addObjectInput(new Pallina(10, "verde"));
-			facts.addObjectInput(new Pallina(11, "blu"));
-			facts.addObjectInput(new Pallina(12, "rosso"));
+//      		for(int i = 1; i <= 5; i++) {
+//				facts.addObjectInput(new Boccetta(i));
+//			}
+//			
+//			facts.addObjectInput(new Colore("rosso"));
+//			facts.addObjectInput(new Colore("blu"));
+//			facts.addObjectInput(new Colore("verde"));
+//			
+//			for(int i = 1; i <= 11; i++) {
+//				facts.addObjectInput(new Tempo(i));
+//			}
+//			
+//			facts.addObjectInput(new On(1,0,1,0));
+//			facts.addObjectInput(new On(2,0,2,0));
+//			facts.addObjectInput(new On(3,0,3,0));
+//			facts.addObjectInput(new On(4,1,1,0));
+//			facts.addObjectInput(new On(5,2,2,0));
+//			facts.addObjectInput(new On(6,3,3,0));
+//			facts.addObjectInput(new On(7,4,1,0));
+//			facts.addObjectInput(new On(8,5,2,0));
+//			facts.addObjectInput(new On(9,6,3,0));
+//			facts.addObjectInput(new On(10,7,1,0));
+//			facts.addObjectInput(new On(11,8,2,0));
+//			facts.addObjectInput(new On(12,9,3,0));
+//			
+//			facts.addObjectInput(new Pallina(1, "blu"));
+//			facts.addObjectInput(new Pallina(2, "verde"));
+//			facts.addObjectInput(new Pallina(3, "blu"));
+//			facts.addObjectInput(new Pallina(4, "verde"));
+//			facts.addObjectInput(new Pallina(5, "rosso"));
+//			facts.addObjectInput(new Pallina(6, "rosso"));
+//			facts.addObjectInput(new Pallina(7, "blu"));
+//			facts.addObjectInput(new Pallina(8, "rosso"));
+//			facts.addObjectInput(new Pallina(9, "verde"));
+//			facts.addObjectInput(new Pallina(10, "verde"));
+//			facts.addObjectInput(new Pallina(11, "blu"));
+//			facts.addObjectInput(new Pallina(12, "rosso"));
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
