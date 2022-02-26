@@ -30,12 +30,16 @@ color(rosso). color(blu). color(verde).
 % pallina(5,blu). pallina(6,blu). pallina(7,blu). pallina(8,blu).
 % pallina(9,verde). pallina(10,verde). pallina(11,verde). pallina(12,verde).ù
 
-pallina(1,blu). pallina(2,verde). pallina(3,blu). pallina(4,verde).
-pallina(5,rosso). pallina(6,rosso). pallina(7,blu). pallina(8,rosso).
-pallina(9,verde). pallina(10,verde). pallina(11,blu). pallina(12,rosso).
+% pallina(1,blu). pallina(2,verde). pallina(3,blu). pallina(4,verde).
+% pallina(5,rosso). pallina(6,rosso). pallina(7,blu). pallina(8,rosso).
+% pallina(9,verde). pallina(10,verde). pallina(11,blu). pallina(12,rosso).
 
 % Ci sono 5 boccette, 2 vuote e 3 riempite con 4 palline per boccetta
+<<<<<<< HEAD
 boccetta(1..5). 
+=======
+% boccetta(1..5). 
+>>>>>>> eb46b6b06fe62b20847fb7bc37be229fc787eb5c
 
 % on(P1,P2,B,T) -> la pallina P1 è sulla pallina P2 nella boccetta B al tempo T. P2 = 0 se è al livello ground
 % on(1,0,1,0). on(2,0,2,0). on(3,0,3,0). on(4,7,3,0).
@@ -48,7 +52,11 @@ on(9,6,3,0). on(10,7,1,0). on(11,8,2,0). on(12,9,3,0).
 
 
 % Numero istanti iniziali
+<<<<<<< HEAD
 tempo(1..11). 
+=======
+%tempo(1..11). 
+>>>>>>> eb46b6b06fe62b20847fb7bc37be229fc787eb5c
 % next(1,2). next(2,3).
 
 % Posso spostare la pallina P alla boccetta B al tempo T se non ho completato il gioco

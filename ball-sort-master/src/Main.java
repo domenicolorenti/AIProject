@@ -37,10 +37,10 @@ public class Main {
         frame.add(b);
         
         // TEST ASP
-      	handler = new DesktopHandler(new DLV2DesktopService("lib/dlv2.exe"));
+      	//handler = new DesktopHandler(new DLV2DesktopService("lib/dlv2.exe"));
       	
 		// Se si esegue la demo su MacOS 64bit scommentare la seguente istruzione:
-		// handler = new DesktopHandler(new DLV2DesktopService("lib/dlv2-macOS-64bit.mac_5"));
+		handler = new DesktopHandler(new DLV2DesktopService("lib/dlv2-macOS"));
       	
       	//Specifichiamo i fatti in input, in questo caso tramite oggetti delle
       	//classi Boccetta,Color, On, Pallina, Tempo che vengono prima registrate all'ASPMapper
@@ -118,7 +118,7 @@ public class Main {
 		for(AnswerSet a:answersets.getAnswersets()){
 			try {
 				for(Object obj:a.getAtoms()){
-					//Scartiamo tutto ciò che non è un oggetto della classe Cell
+					//Scartiamo tutto ciï¿½ che non ï¿½ un oggetto della classe Cell
 					if(!(obj instanceof Move)) continue;
 					//Convertiamo in un oggetto della classe Cell e impostiamo il valore di ogni cella 
 					//nella matrice rappresentante la griglia del Sudoku
