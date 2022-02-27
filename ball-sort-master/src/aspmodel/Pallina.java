@@ -9,12 +9,12 @@ public class Pallina {
 	@Param(0)
 	private int idPallina;
 	
-	@Param(0)
-	private String colore;
+	@Param(1)
+	private int colore;
 	
 	public Pallina() {}
 	
-	public Pallina(int idPallina, String colore) {
+	public Pallina(int idPallina, int colore) {
 		this.idPallina = idPallina;
 		this.colore = colore;
 	}
@@ -27,11 +27,11 @@ public class Pallina {
 		this.idPallina = idPallina;
 	}
 
-	public String getColore() {
+	public int getColore() {
 		return colore;
 	}
 
-	public void setColore(String colore) {
+	public void setColore(int colore) {
 		this.colore = colore;
 	}
 }

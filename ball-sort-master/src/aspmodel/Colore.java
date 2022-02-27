@@ -7,20 +7,20 @@ import it.unical.mat.embasp.languages.Param;
 public class Colore {
 
 	@Param(0)
-	private String colore;
+	private int colore;
 	
 	public Colore() {}
 	
-	public Colore(String colore) {
+	public Colore(int colore) {
 		this.colore = colore;
 	}
 
 
-	public String getColore() {
+	public int getColore() {
 		return colore;
 	}
 
-	public void setColore(String colore) {
+	public void setColore(int colore) {
 		this.colore = colore;
 	}
 }

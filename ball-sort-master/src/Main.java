@@ -1,4 +1,10 @@
-import javax.swing.*;
+import java.awt.Dimension;
+import java.util.List;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+
+import javax.swing.JFrame;
 
 import aspmodel.Boccetta;
 import aspmodel.Colore;
@@ -18,15 +24,13 @@ import it.unical.mat.embasp.languages.asp.AnswerSets;
 import it.unical.mat.embasp.platforms.desktop.DesktopHandler;
 import it.unical.mat.embasp.specializations.dlv2.desktop.DLV2DesktopService;
 
-import java.awt.*;
-
 public class Main {
 	
 	private static String encodingResource = "encodings/bubblesorting";
 	
 	private static Handler handler;
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws Exception {
         JFrame frame = new JFrame("Ball Sort Game");
         Dimension dimension = new Dimension(550, 700);
         Board b = new Board();
@@ -38,9 +42,12 @@ public class Main {
         
         // TEST ASP
       	//handler = new DesktopHandler(new DLV2DesktopService("lib/dlv2.exe"));
+        
+        //Se si esegue la demo su Linux 64bit scommentare la seguente istruzione:
+        handler = new DesktopHandler(new DLV2DesktopService("lib/dlv2"));
       	
 		// Se si esegue la demo su MacOS 64bit scommentare la seguente istruzione:
-		handler = new DesktopHandler(new DLV2DesktopService("lib/dlv2-macOS"));
+		// handler = new DesktopHandler(new DLV2DesktopService("lib/dlv2-macOS-64bit.mac_5"));
       	
       	//Specifichiamo i fatti in input, in questo caso tramite oggetti delle
       	//classi Boccetta,Color, On, Pallina, Tempo che vengono prima registrate all'ASPMapper
@@ -55,49 +62,9 @@ public class Main {
 			e1.printStackTrace();
 		}
       	
-      	InputProgram facts = new ASPInputProgram();
+      	//InputProgram facts = new ASPInputProgram();
       	
-      	try {
-//      		for(int i = 1; i <= 5; i++) {
-//				facts.addObjectInput(new Boccetta(i));
-//			}
-//			
-//			facts.addObjectInput(new Colore("rosso"));
-//			facts.addObjectInput(new Colore("blu"));
-//			facts.addObjectInput(new Colore("verde"));
-//			
-//			for(int i = 1; i <= 11; i++) {
-//				facts.addObjectInput(new Tempo(i));
-//			}
-//			
-//			facts.addObjectInput(new On(1,0,1,0));
-//			facts.addObjectInput(new On(2,0,2,0));
-//			facts.addObjectInput(new On(3,0,3,0));
-//			facts.addObjectInput(new On(4,1,1,0));
-//			facts.addObjectInput(new On(5,2,2,0));
-//			facts.addObjectInput(new On(6,3,3,0));
-//			facts.addObjectInput(new On(7,4,1,0));
-//			facts.addObjectInput(new On(8,5,2,0));
-//			facts.addObjectInput(new On(9,6,3,0));
-//			facts.addObjectInput(new On(10,7,1,0));
-//			facts.addObjectInput(new On(11,8,2,0));
-//			facts.addObjectInput(new On(12,9,3,0));
-//			
-//			facts.addObjectInput(new Pallina(1, "blu"));
-//			facts.addObjectInput(new Pallina(2, "verde"));
-//			facts.addObjectInput(new Pallina(3, "blu"));
-//			facts.addObjectInput(new Pallina(4, "verde"));
-//			facts.addObjectInput(new Pallina(5, "rosso"));
-//			facts.addObjectInput(new Pallina(6, "rosso"));
-//			facts.addObjectInput(new Pallina(7, "blu"));
-//			facts.addObjectInput(new Pallina(8, "rosso"));
-//			facts.addObjectInput(new Pallina(9, "verde"));
-//			facts.addObjectInput(new Pallina(10, "verde"));
-//			facts.addObjectInput(new Pallina(11, "blu"));
-//			facts.addObjectInput(new Pallina(12, "rosso"));
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+      	InputProgram facts = b.getFacts();
       	
 		// Aggiungiamo all'handler i fatti
 		handler.addProgram(facts);
@@ -115,20 +82,45 @@ public class Main {
 
 		// Analizziamo l'answer set 
 		AnswerSets answersets = (AnswerSets) o;
+		List<Move> moves = new ArrayList<Move>();
 		for(AnswerSet a:answersets.getAnswersets()){
 			try {
 				for(Object obj:a.getAtoms()){
 					//Scartiamo tutto ci� che non � un oggetto della classe Cell
-					if(!(obj instanceof Move)) continue;
+					//if(!(obj instanceof Move)) continue;
 					//Convertiamo in un oggetto della classe Cell e impostiamo il valore di ogni cella 
 					//nella matrice rappresentante la griglia del Sudoku
-					Move move= (Move) obj;	
-					System.out.println("move (" + move.getPallina() + " " + move.getBoccetta() + " " + move.getTempo() + ")");
+					
+					if(obj instanceof Move) {
+						Move move= (Move) obj;	
+						moves.add(move);
+//						System.out.println("move (" + move.getPallina() + " " + move.getBoccetta() + " " + move.getTempo() + ")");
+					}
+					if(obj instanceof On) {
+						On on = (On) obj;
+//						if(on.getTempo() == 0)
+//							System.out.println("on (" + on.getPallina1() + " " + on.getPallina2() + " " + on.getBoccetta() + " " + on.getTempo() + ")");
+					}
+					
 				}
+				System.out.println();
+				break;
 			} catch (Exception e) {
 				e.printStackTrace();
 			} 
-			
+		}
+		
+		moves.sort(new Comparator<Move>() {
+			public int compare(Move o1, Move o2) {
+				return o1.getTempo() - o2.getTempo();
+
+			}
+		});
+		
+		for(var move: moves) {
+			System.out.println("move (" + move.getPallina() + " " + move.getBoccetta() + " " + move.getTempo() + ")");
+			b.moveBall(move.getPallina(), move.getBoccetta());
+			Thread.sleep(1500);
 		}
     }
 

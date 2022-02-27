@@ -2,10 +2,21 @@ import tube.Ball;
 import tube.Tube;
 
 import javax.swing.*;
+
+import aspmodel.Boccetta;
+import aspmodel.Colore;
+import aspmodel.On;
+import aspmodel.Pallina;
+import aspmodel.Tempo;
+import it.unical.mat.embasp.base.InputProgram;
+import it.unical.mat.embasp.languages.asp.ASPInputProgram;
+
 import java.awt.*;
 import java.awt.event.*;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 
 public class Board extends JPanel implements ActionListener, MouseListener {
@@ -16,74 +27,51 @@ public class Board extends JPanel implements ActionListener, MouseListener {
 //    final static int TUBE_AMOUNT = 10;
 //    final static int EMPTY_TUBE_AMOUNT = 2;
     
-	final static Color[] BALL_COLORS = { Color.red, Color.blue, Color.green };
+	final static Color[] BALL_COLORS = { Color.red, Color.blue, Color.green};
 	final static int TUBE_AMOUNT = 5;
 	final static int EMPTY_TUBE_AMOUNT = 2;
+	
+	final static int time = 15;
+	
+//	private Map<Color,Integer> colorMapping = new HashMap<Color,Integer>();
 
     static List<Tube> tubes;
     static int choosenTube = -1;
+    
+    private InputProgram facts = new ASPInputProgram();
 
-    Board() {
+    Board() throws Exception {
         super();
         addMouseListener(this);
         //initializeGame();
-        initializeTest();
+        //initializeTest();
+        initializeGameAndFacts();
     }
     
-    private void initializeTest() {
-    	 tubes = new ArrayList<>();
-
-         Tube tube1 = new Tube();
-         tube1.add(new Ball(Color.red));
-         tube1.add(new Ball(Color.blue));
-         tube1.add(new Ball(Color.green));
-         tube1.add(new Ball(Color.green));
-         
-         tubes.add(tube1);
-         
-         Tube tube2 = new Tube();
-         tube2.add(new Ball(Color.red));
-         tube2.add(new Ball(Color.blue));
-         tube2.add(new Ball(Color.green));
-         tube2.add(new Ball(Color.green));
-         
-         tubes.add(tube2);
-         
-         Tube tube3 = new Tube();
-         tube3.add(new Ball(Color.red));
-         tube3.add(new Ball(Color.blue));
-         tube3.add(new Ball(Color.red));
-         tube3.add(new Ball(Color.blue));
-         
-         tubes.add(tube3);
-         
-         tubes.add(new Tube());
-         tubes.add(new Tube());
-    }
     
-    private void initializeGame() {
-        tubes = new ArrayList<>();
-        int [] ballsInTubes = new int [TUBE_AMOUNT - EMPTY_TUBE_AMOUNT];
-        Random rand = new Random();
-
-        for (int t = 0; t < TUBE_AMOUNT - EMPTY_TUBE_AMOUNT; t++) {
-            Tube tube = new Tube();
-
-            while (tube.size() != 4) {
-                int x = rand.nextInt(TUBE_AMOUNT - EMPTY_TUBE_AMOUNT);
-                Color c = BALL_COLORS[x];
-                if (ballsInTubes[x] < 4) {
-                    ballsInTubes[x]++;
-                    tube.add(new Ball(c));
-                }
-            }
-            tubes.add(tube);
-        }
-
-        for (int t=0; t<EMPTY_TUBE_AMOUNT; t++) {
-            tubes.add(new Tube());
-        }
-    }
+//    private void initializeGame() {
+//        tubes = new ArrayList<>();
+//        int [] ballsInTubes = new int [TUBE_AMOUNT - EMPTY_TUBE_AMOUNT];
+//        Random rand = new Random();
+//
+//        for (int t = 0; t < TUBE_AMOUNT - EMPTY_TUBE_AMOUNT; t++) {
+//            Tube tube = new Tube();
+//
+//            while (tube.size() != 4) {
+//                int x = rand.nextInt(TUBE_AMOUNT - EMPTY_TUBE_AMOUNT);
+//                Color c = BALL_COLORS[x];
+//                if (ballsInTubes[x] < 4) {
+//                    ballsInTubes[x]++;
+//                    tube.add(new Ball(c));
+//                }
+//            }
+//            tubes.add(tube);
+//        }
+//
+//        for (int t=0; t<EMPTY_TUBE_AMOUNT; t++) {
+//            tubes.add(new Tube());
+//        }
+//    }
 
     public void actionPerformed(ActionEvent actionEvent) {
         repaint();
@@ -215,14 +203,111 @@ public class Board extends JPanel implements ActionListener, MouseListener {
         } else if (selectedTube >= 0 && choosenTube == -1) {
             choosenTube = selectedTube;
         } else if (selectedTube >= 0 && choosenTube >= 0) {
-            if (tubes.get(choosenTube).moveTo(tubes.get(selectedTube)) && checkVictory())
-                initializeGame();
+            if (tubes.get(choosenTube).moveTo(tubes.get(selectedTube)) && checkVictory()) {
+//              initializeGame();
+//            	initializeTest();
+            }
 
             choosenTube = -1;
         }
 
         repaint();
     }
+    
+    public void initializeGameAndFacts() throws Exception {
+		tubes = new ArrayList<>();
+		int[] ballsInTubes = new int[TUBE_AMOUNT - EMPTY_TUBE_AMOUNT];
+		Random rand = new Random();
+		
+		int nColors = TUBE_AMOUNT - EMPTY_TUBE_AMOUNT;
+		int nBalls = nColors * 4;
+		
+		int cont = 1;
+		int index = cont;
+
+		for (int t = 0; t < TUBE_AMOUNT - EMPTY_TUBE_AMOUNT; t++) {
+			Tube tube = new Tube();
+
+			while (tube.size() != 4) {
+				int x = rand.nextInt(TUBE_AMOUNT - EMPTY_TUBE_AMOUNT);
+				Color c = BALL_COLORS[x];
+				if (ballsInTubes[x] < 4) {
+					ballsInTubes[x]++;
+					tube.add(new Ball(index, c));
+					
+					facts.addObjectInput(new Pallina(index,x+1));
+					
+					index += nColors;
+				}
+			}
+			
+			cont++;
+			index = cont;
+			
+			tubes.add(tube);
+		}
+
+		for (int t = 0; t < EMPTY_TUBE_AMOUNT; t++) {
+			tubes.add(new Tube());
+		}
+
+		for(int i=1; i <= TUBE_AMOUNT; i++)
+			facts.addObjectInput(new Boccetta(i));
+
+		for(int i=1; i <= time; i++)
+			facts.addObjectInput(new Tempo(i));
+		
+		for(int i=1; i <= TUBE_AMOUNT - EMPTY_TUBE_AMOUNT; i++)
+			facts.addObjectInput(new Colore(i));
+		
+		cont = 0;
+		index = 1;
+		for(int i=1; i <= nBalls; i++) {
+			if(i > nColors)
+				cont++;
+			
+			facts.addObjectInput(new On(i,cont,index,0));
+			
+			index++;
+			if(index > nColors)
+				index = 1;
+		}
+	}
+    
+    public InputProgram getFacts() {
+		return facts;
+	}
+    
+    public void moveBall(int ball, int tube) {
+		int selectedTube = -1;
+		boolean found = false;
+		int cont = 1;
+		for (Tube t : tubes) {
+			for(Ball b : t) {
+				if(b.id == ball) {
+					choosenTube = cont;
+					found = true;
+					break;
+				}
+				
+			}
+			if(found)
+				break;
+			cont++;
+		}
+		
+		selectedTube = tube;
+		
+		System.out.println(choosenTube + " " + selectedTube);
+		
+		tubes.get(choosenTube-1).moveTo(tubes.get(selectedTube-1));
+		
+		choosenTube = -1;
+		
+		repaint();
+		
+//		choosenTube = tube;
+	}
 
     public void mouseClicked(MouseEvent mouseEvent) {
     }
@@ -235,5 +320,9 @@ public class Board extends JPanel implements ActionListener, MouseListener {
 
     public void mouseExited(MouseEvent mouseEvent) {
     }
+
+	
+
+	
 
 }

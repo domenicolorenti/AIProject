@@ -7,7 +7,7 @@
 			<attribute name="module" value="true"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="lib" path="lib/antlr-4.7-complete.jar"/>
-	<classpathentry kind="lib" path="lib/embASP.jar"/>
+	<classpathentry kind="lib" path="/home/pbassa/Downloads/ball-sort-master/lib/embASP.jar"/>
+	<classpathentry kind="lib" path="/home/pbassa/Downloads/ball-sort-master/lib/antlr-4.7-complete.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
